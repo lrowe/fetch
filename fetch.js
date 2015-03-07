@@ -258,9 +258,9 @@
 
   Request.prototype.fetch = function() {
     var self = this
+    var xhr = new XMLHttpRequest()
 
-    return new Promise(function(resolve, reject) {
-      var xhr = new XMLHttpRequest()
+    var promise = new Promise(function(resolve, reject) {
       if (self.credentials === 'cors') {
         xhr.withCredentials = true;
       }
@@ -315,6 +315,10 @@
 
       xhr.send(typeof self._bodyInit === 'undefined' ? null : self._bodyInit)
     })
+
+    promise.abort = xhr.abort.bind(xhr)
+
+    return promise;
   }
 
   Body.call(Request.prototype)
